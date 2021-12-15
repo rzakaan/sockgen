@@ -17,3 +17,5 @@ dist:
     cd ${DEPLOY} && python setup.py bdist
 makedoc:
     sphinx-build -b html doc/sphinx
+setup:
+    pip install -r requirements.txt
