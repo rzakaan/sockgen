@@ -5,7 +5,7 @@ try:
     gi.require_version('Gtk', '3.0') 
     from gi.repository import GLib, Gio, Gtk
 except Exception as e:
-    exit("Error importin gtk")
+    print(e)
 
 class GtkMainWindow():
     # Constants

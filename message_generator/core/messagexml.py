@@ -30,7 +30,7 @@ def readXML(fileName):
     return tree.getroot()
     
     
-def readInterfaces(node):
+def readInterfaces(node) -> list[InterfaceXML]:
     """
     This function is for reading interface for communicating
     
