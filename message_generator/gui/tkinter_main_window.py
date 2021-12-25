@@ -12,10 +12,50 @@ from message_generator.gui.gtk_main_window import *
 from message_generator.gui.tkinter_main_window import *
 
 class TkMainWindow(tk.Tk):
+    PADX=5
+    PADY=5
     ICON_DIR="./message_generator/icons/"
+    TAGS = ['interfaces', 'datafields', 'enumerations', 'complex', 'messages']
+    
+    # Interface Properties
+    BIT_ORDER = ['Intel', 'Motorola']
+    BYTE_ORDER = [ 'LittleEndian', 'BigEndian' ]
+    INTERFACE_TYPE = ['TCP_SERVER', 'TCP_CLIENT', 'UDP_SERVER', 'UDP_CLIENT', 'UDP_BROADCAST', 'UDP_MULTICAST', 'UDP_UNICAST', 'SERIAL', 'FILE']
+
+    # Datafield Properties
+    DATA_FORMAT_TYPE = ['BNR', 'IEEE754']
+    DATA_TYPE = ['INT', 'UINT', 'FLOAT', 'STRING', 'BOOLEAN']
 
     def __init__(self):
         super().__init__()
+
+        # Interface 
+        self.textInterfaceName = StringVar()
+        self.textBitOrder = StringVar()
+        self.textInByteOrder = StringVar()
+        self.textOutByteOrder = StringVar()
+        self.textInterfaceType = StringVar()
+        self.textInterfaceSettings = StringVar()
+        self.textInterfaceDescription = StringVar()
+
+        # Datafield
+        self.textDatafieldName = StringVar()
+        self.textDataType = StringVar()
+        self.textDataFormatType = StringVar()
+        self.textDataFieldMinValue = StringVar()
+        self.textDataFieldMaxValue = StringVar()
+        self.textDataFieldSize = StringVar()
+        self.textDataFieldResolution = StringVar()
+        self.textDataFieldDescription = StringVar()
+
+        # Enumeration
+        self.textEnumName = StringVar()
+        self.textEnumSize = StringVar()
+        self.textEnumMinValue = StringVar()
+        self.textEnumMaxValue = StringVar()
+        self.textEnumDataFormatType = StringVar()
+        self.textEnumDescription = StringVar()
+
         self.loadValues()
         self.init_ui()  
 
@@ -77,7 +117,7 @@ class TkMainWindow(tk.Tk):
         helpMenu.add_command(label="About...", command=self.onAboutHelpMenuClick)
 
         menuBar.add_cascade(label="File", menu=fileMenu)
-        menuBar.add_cascade(label="Edit", menu=helpMenu)
+        menuBar.add_cascade(label="Edit", menu=editMenu)
         menuBar.add_cascade(label="Help", menu=helpMenu)
         self.config(menu=menuBar)
 
@@ -98,65 +138,41 @@ class TkMainWindow(tk.Tk):
         # Left Panel TreeView
         #
         self.tree = ttk.Treeview(self.main)
-        self.tree.bind('<<TreeviewSelect>>', self.item_selected)
+        self.tree.bind('<<TreeviewSelect>>', self.treeViewItemSelected)
         self.tree.heading('#0', text='Nodes', anchor='w')
 
         root_node=''
-        self.node_interfaces = self.tree.insert(root_node, 'end', text='interfaces', open=True, image=self.iconAddNode)
-        self.node_datafields = self.tree.insert(root_node, 'end', text='datafields', open=True, image=self.iconAddNode)
-        self.node_enumerations = self.tree.insert(root_node, 'end', text='enumerations', open=True, image=self.iconAddNode)
-        self.node_complex = self.tree.insert(root_node, 'end', text='complex', open=True, image=self.iconAddNode)
-        self.node_messages = self.tree.insert(root_node, 'end', text='messages', open=True, image=self.iconAddNode)
+        self.node_interfaces = self.tree.insert(root_node, 'end', text='interfaces', open=True, image=self.iconAddNode, tags=('parent'))
+        self.node_datafields = self.tree.insert(root_node, 'end', text='datafields', open=True, image=self.iconAddNode, tags=('parent'))
+        self.node_enumerations = self.tree.insert(root_node, 'end', text='enumerations', open=True, image=self.iconAddNode, tags=('parent'))
+        self.node_complex = self.tree.insert(root_node, 'end', text='complex', open=True, image=self.iconAddNode, tags=('parent'))
+        self.node_messages = self.tree.insert(root_node, 'end', text='messages', open=True, image=self.iconAddNode, tags=('parent'))
 
         # to load interfaces
         for i in self.interfaces:
-            self.tree.insert(self.node_interfaces, 'end', text=i.name, open=True)
+            self.tree.insert(self.node_interfaces, 'end', text=i.name, tags=('child'))
 
         # to load datafields
         for i in self.datafields:
-            self.tree.insert(self.node_datafields, 'end', text=i.name, open=True)
+            self.tree.insert(self.node_datafields, 'end', text=i.name, tags=('child'))
 
         # to load enumerations
         for i in self.enumerations:
-            self.tree.insert(self.node_enumerations, 'end', text=i.name, open=True)
+            self.tree.insert(self.node_enumerations, 'end', text=i.name, tags=('child'))
         
         # to load complex
         for i in self.complextypes:
-            self.tree.insert(self.node_complex, 'end', text=i.name, open=True)
+            self.tree.insert(self.node_complex, 'end', text=i.name, tags=('child'))
 
         # to load messages
         for i in self.messages:
-            self.tree.insert(self.node_messages, 'end', text=i.name, open=True)
+            self.tree.insert(self.node_messages, 'end', text=i.name, tags=('child'))
         
         self.tree.pack(side=LEFT, fill=tk.BOTH, expand=1)
-
-        #
-        # Propety Panel
-        #    
         self.propertyFrame = tk.Frame(self.main)
         self.propertyTable = tk.Frame(self.propertyFrame)
-        lbl1 = Label(self.propertyTable, text="Record Element")
-        lbl2 = Label(self.propertyTable, text="Field Type")
-        lbl3 = Label(self.propertyTable, text="Min Value")
-        lbl4 = Label(self.propertyTable, text="Max Value")
-        cmb1 = ttk.Combobox(self.propertyTable, values=[i.name for i in self.datafields])
-        cmb2 = ttk.Combobox(self.propertyTable, values=[i.dataFormatType for i in self.datafields])
-        entry1 = Entry(self.propertyTable)
-        entry2 = Entry(self.propertyTable)
-        
-        # property labels
-        lbl1.grid(row=0, column=0)
-        lbl2.grid(row=1, column=0)
-        lbl3.grid(row=2, column=0)
-        lbl4.grid(row=3, column=0)
-        # property components
-        cmb1.grid(row=0, column=1)
-        cmb2.grid(row=1, column=1)
-        entry1.grid(row=2, column=1)
-        entry2.grid(row=3, column=1)
-        self.propertyTable.pack(fill=tk.BOTH, expand=1)
         self.propertyFrame.pack(side=RIGHT, fill=tk.BOTH, expand=1)
-
+        self.propertyTable.pack(fill=tk.BOTH, expand=1)
     #
     # Menu Functions
     #
@@ -183,14 +199,187 @@ class TkMainWindow(tk.Tk):
 
     def onAboutHelpMenuClick(self):
         pass
-
-    def loadInterfaceComponents(self):
-        pass
-
     #
     # Gui Functions
     #
-    def item_selected(self, event):
+    def treeViewItemSelected(self, event):
+        curId = self.tree.selection()[0]
+        parentId = self.tree.parent(curId)
+        parent = self.tree.item(parentId)
+        current = self.tree.item(curId)
+
+        if "parent" in current['tags']:
+            return
+
+        self.clearFrame(self.propertyTable)
+
+        if parent['text'] == 'interfaces':
+            interface = self.findNode(current['text'], self.interfaces)
+            self.loadInterfaceComponents()
+            self.loadInterfaceData(interface)
+
+        elif parent['text'] == 'datafields':
+            enum = self.findNode(current['text'], self.datafields)
+            self.loadDatafieldComponents()
+            self.loadDatafieldData(enum)
+
+        elif parent['text'] == 'enumerations':
+            enum = self.findNode(current['text'], self.enumerations)
+            self.loadEnumerationComponents()
+            self.loadEnumerationData(enum)
+
+        elif parent['text'] == 'complex':
+            self.loadComplexTypeComponents()
+        elif parent['text'] == 'messages':
+            self.loadMessageComponents()
+        else:
+            print('Unknown Selected')
+
+    def clearFrame(self, frame):
+        for widget in frame.winfo_children():
+            widget.destroy()
+
+    def findNode(self, name, array):
+        for i in array:
+            if name == i.name:
+                return i
+        return None
+
+    def loadInterfaceData(self, interface):
+        self.textInterfaceName.set(interface.name)
+        self.textBitOrder.set(interface.bitOrder)
+        self.textInByteOrder.set(interface.inByteOrder)
+        self.textOutByteOrder.set(interface.outByteOrder)
+        self.textInterfaceType.set(interface.interfaceType)
+        self.textInterfaceSettings.set(interface.interfaceSettings)
+        self.textInterfaceDescription.set(interface.description)
+
+    def loadDatafieldData(self, datafield):
+        self.textDatafieldName.set(datafield.name)
+        self.textDataType.set(datafield.dataType)
+        self.textDataFormatType.set(datafield.dataFormatType)
+        self.textDataFieldMinValue.set(datafield.minValue)
+        self.textDataFieldMaxValue.set(datafield.maxValue)
+        self.textDataFieldSize.set(datafield.size)
+        self.textDataFieldResolution.set(datafield.description)
+        self.textInterfaceDescription.set(datafield.description)
+
+    def loadEnumerationData(self, enum):
+        self.textEnumName.set(enum.name)
+        self.textEnumSize.set(enum.size)
+        self.textEnumMinValue.set(enum.minValue)
+        self.textEnumMaxValue.set(enum.maxValue)
+        self.textEnumDataFormatType.set(enum.dataFormatType)
+        self.textEnumDescription.set(enum.description)
+
+    def loadInterfaceComponents(self):     
+        lblInterfaceName = Label(self.propertyTable, text="Interface Name")
+        lblBitOrder = Label(self.propertyTable, text="Bit Order")
+        lblInByteOrder = Label(self.propertyTable, text="In Byte Order")
+        lblOutByteOrder = Label(self.propertyTable, text="Out Byte Order")
+        lblInterfaceType = Label(self.propertyTable, text="Interface Type")
+        lblInterfaceSettings = Label(self.propertyTable, text="Interface Settings")
+        lblInterfaceDescription = Label(self.propertyTable, text="Interface Description")
+
+        self.entryInterfaceName = Entry(self.propertyTable, textvariable=self.textInterfaceName)
+        self.cmbBitOrder = ttk.Combobox(self.propertyTable, values=[i for i in self.BIT_ORDER], textvariable=self.textBitOrder, state="readonly")
+        self.cmbInByteOrder = ttk.Combobox(self.propertyTable, values=[i for i in self.BYTE_ORDER], textvariable=self.textInByteOrder, state="readonly")
+        self.cmbOutByteOrder = ttk.Combobox(self.propertyTable, values=[i for i in self.BYTE_ORDER], textvariable=self.textOutByteOrder, state="readonly")
+        self.cmbInterfaceType = ttk.Combobox(self.propertyTable, values=[i for i in self.INTERFACE_TYPE], textvariable=self.textInterfaceType, state="readonly")
+        self.cmbInterfaceSettings = Entry(self.propertyTable, textvariable=self.textInterfaceSettings)
+        self.entryInterfaceDescription = Entry(self.propertyTable, textvariable=self.textInterfaceDescription)
+        
+        # property labels
+        lblInterfaceName.grid(row=0, column=0, padx=self.PADX, pady=self.PADY)
+        lblBitOrder.grid(row=1, column=0, padx=self.PADX, pady=self.PADY)
+        lblInByteOrder.grid(row=2, column=0, padx=self.PADX, pady=self.PADY)
+        lblOutByteOrder.grid(row=3, column=0, padx=self.PADX, pady=self.PADY)
+        lblInterfaceType.grid(row=4, column=0, padx=self.PADX, pady=self.PADY)
+        lblInterfaceSettings.grid(row=5, column=0, padx=self.PADX, pady=self.PADY)
+        lblInterfaceDescription.grid(row=6, column=0, padx=self.PADX, pady=self.PADY)
+
+        # property components
+        COL=1
+        self.entryInterfaceName.grid(row=0, column=COL, sticky="W")
+        self.cmbBitOrder.grid(row=1, column=COL, sticky="W")
+        self.cmbInByteOrder.grid(row=2, column=COL, sticky="W")
+        self.cmbOutByteOrder.grid(row=3, column=COL, sticky="W")
+        self.cmbInterfaceType.grid(row=4, column=COL, sticky="W")
+        self.cmbInterfaceSettings.grid(row=5, column=COL, sticky="W")
+        self.entryInterfaceDescription.grid(row=6, column=COL, sticky="W")
+    
+    def loadDatafieldComponents(self):
+        lblName = Label(self.propertyTable, text="Name")
+        lblDataType = Label(self.propertyTable, text="Data Type")
+        lblDataFormatType = Label(self.propertyTable, text="Data Format Type")
+        lblMinVallue = Label(self.propertyTable, text="Min Value")
+        lblMaxValue = Label(self.propertyTable, text="Max Value")
+        lblSize = Label(self.propertyTable, text="Size")
+        lblResolution = Label(self.propertyTable, text="Resolution")
+        lblDescription = Label(self.propertyTable, text="Description")
+
+        entryName = Entry(self.propertyTable, textvariable=self.textDatafieldName)
+        cmbDataType = ttk.Combobox(self.propertyTable, values=[i for i in self.DATA_TYPE], textvariable=self.textDataType, state="readonly")
+        cmbDataFormatType = ttk.Combobox(self.propertyTable, values=[i for i in self.DATA_FORMAT_TYPE], textvariable=self.textDataFormatType, state="readonly")
+        entryMinValue = Entry(self.propertyTable, textvariable=self.textDataFieldMinValue)
+        entryMaxValue = Entry(self.propertyTable, textvariable=self.textDataFieldMaxValue)
+        entrySize = Entry(self.propertyTable, textvariable=self.textDataFieldSize)
+        entryResolution = Entry(self.propertyTable, textvariable=self.textDataFieldResolution)
+        entryDescription = Entry(self.propertyTable, textvariable=self.textDataFieldDescription)        
+        
+        # property labels
+        lblName.grid(row=0, column=0, padx=self.PADX, pady=self.PADY)
+        lblDataType.grid(row=1, column=0, padx=self.PADX, pady=self.PADY)
+        lblDataFormatType.grid(row=2, column=0, padx=self.PADX, pady=self.PADY)
+        lblMinVallue.grid(row=3, column=0, padx=self.PADX, pady=self.PADY)
+        lblMaxValue.grid(row=4, column=0, padx=self.PADX, pady=self.PADY)
+        lblSize.grid(row=5, column=0, padx=self.PADX, pady=self.PADY)
+        lblResolution.grid(row=6, column=0, padx=self.PADX, pady=self.PADY)
+        lblDescription.grid(row=7, column=0, padx=self.PADX, pady=self.PADY)
+        
+        # property components
+        entryName.grid(row=0, column=1, sticky="W")
+        cmbDataType.grid(row=1, column=1, sticky="W")
+        cmbDataFormatType.grid(row=2, column=1, sticky="W")
+        entryMinValue.grid(row=3, column=1, sticky="W")
+        entryMaxValue.grid(row=4, column=1, sticky="W")
+        entrySize.grid(row=5, column=1, sticky="W")
+        entryResolution.grid(row=6, column=1, sticky="W")
+        entryDescription.grid(row=7, column=1, sticky="W")  
+
+    def loadEnumerationComponents(self):
+        lblName = Label(self.propertyTable, text="Name")
+        lblDataFormatType = Label(self.propertyTable, text="Data Format Type")
+        lblMinVallue = Label(self.propertyTable, text="Min Value")
+        lblMaxValue = Label(self.propertyTable, text="Max Value")
+        lblSize = Label(self.propertyTable, text="Size")
+        lblDescription = Label(self.propertyTable, text="Description")
+
+        entryName = Entry(self.propertyTable, textvariable=self.textEnumName)
+        cmbDataFormatType = ttk.Combobox(self.propertyTable, values=[i for i in self.DATA_FORMAT_TYPE], textvariable=self.textEnumDataFormatType, state="readonly")
+        entryMinValue = Entry(self.propertyTable, textvariable=self.textEnumMinValue)
+        entryMaxValue = Entry(self.propertyTable, textvariable=self.textEnumMaxValue)
+        entrySize = Entry(self.propertyTable, textvariable=self.textEnumSize)
+        entryDescription = Entry(self.propertyTable, textvariable=self.textEnumDescription)
+        
+        # property labels
+        lblName.grid(row=0, column=0, padx=self.PADX, pady=self.PADY)
+        lblDataFormatType.grid(row=2, column=0, padx=self.PADX, pady=self.PADY)
+        lblMinVallue.grid(row=3, column=0, padx=self.PADX, pady=self.PADY)
+        lblMaxValue.grid(row=4, column=0, padx=self.PADX, pady=self.PADY)
+        lblSize.grid(row=5, column=0, padx=self.PADX, pady=self.PADY)
+        lblDescription.grid(row=7, column=0, padx=self.PADX, pady=self.PADY)
+        
+        # property components
+        entryName.grid(row=0, column=1, sticky="W")
+        cmbDataFormatType.grid(row=2, column=1, sticky="W")
+        entryMinValue.grid(row=3, column=1, sticky="W")
+        entryMaxValue.grid(row=4, column=1, sticky="W")
+        entrySize.grid(row=5, column=1, sticky="W")
+        entryDescription.grid(row=7, column=1, sticky="W")  
+
+    def loadComplexTypeComponents(self):
         pass
+
     def on_closing(self):
         pass

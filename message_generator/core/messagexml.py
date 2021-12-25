@@ -79,6 +79,7 @@ def readDataFields(node):
         item.maxValue = getAttrib(i, 'maxValue')
         item.dataType = getAttrib(i, 'dataType')
         item.dataFormatType = getAttrib(i, 'dataFormatType')
+        item.resolution = getAttrib(i, 'resolution')
         item.description = getAttrib(i, 'description')
         item_list.append(item)
         
