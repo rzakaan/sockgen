@@ -119,7 +119,7 @@ class TkMainWindow(tk.Tk):
         menuBar.add_cascade(label="File", menu=fileMenu)
         menuBar.add_cascade(label="Edit", menu=editMenu)
         menuBar.add_cascade(label="Help", menu=helpMenu)
-        self.config(menu=menuBar)
+        self.config(menu=menuBar)        
 
         #
         # Icons
@@ -135,10 +135,19 @@ class TkMainWindow(tk.Tk):
         self.main.pack(fill=tk.BOTH, expand=1)
 
         #
+        # Context Menu
+        #
+        self.contextMenu = Menu(self.main, tearoff = 0)
+        self.contextMenu.add_command(label ="Add Node", command=self.onAddNodeContextMenuClick)
+        self.contextMenu.add_command(label ="Remove Node", command=self.onRemoveNodeContextMenuClick)
+        self.contextMenu.add_command(label ="Rename", command=self.onRenameNodeContextMenuClick)
+
+        #
         # Left Panel TreeView
         #
         self.tree = ttk.Treeview(self.main)
         self.tree.bind('<<TreeviewSelect>>', self.treeViewItemSelected)
+        self.tree.bind("<Button-3>", self.do_popup)
         self.tree.heading('#0', text='Nodes', anchor='w')
 
         root_node=''
@@ -169,10 +178,58 @@ class TkMainWindow(tk.Tk):
             self.tree.insert(self.node_messages, 'end', text=i.name, tags=('child'))
         
         self.tree.pack(side=LEFT, fill=tk.BOTH, expand=1)
-        self.propertyFrame = tk.Frame(self.main)
+        self.propertyFrame = tk.LabelFrame(self.main, text="Properties")
         self.propertyTable = tk.Frame(self.propertyFrame)
-        self.propertyFrame.pack(side=RIGHT, fill=tk.BOTH, expand=1)
-        self.propertyTable.pack(fill=tk.BOTH, expand=1)
+        self.propertyFrame.pack(side=TOP, fill=tk.BOTH, expand=1, padx=self.PADX, pady=self.PADY)
+        self.propertyTable.pack(fill=tk.BOTH, expand=1, padx=self.PADX, pady=self.PADY)        
+
+        #
+        # Right Panel
+        #
+        self.byteFrame = tk.Frame(self.main)
+        self.byteFrame.pack(side=BOTTOM, fill=tk.BOTH, expand=1)
+        columns = ('Address', '7', '6', 5, '4', '3', '2', '1', '0')
+        self.byteTree = ttk.Treeview(self.byteFrame, columns=columns, show='headings')
+        #self.byteTree.bind('<<TreeviewSelect>>', self.byteTreeViewItemSelected)
+        self.byteTree.heading('Address', text='Address', anchor='w')        
+        self.byteTree.heading('7', text='7', anchor='w')
+        self.byteTree.heading('6', text='6', anchor='w')
+        self.byteTree.heading('5', text='5', anchor='w')
+        self.byteTree.heading('4', text='4', anchor='w')
+        self.byteTree.heading('3', text='3', anchor='w')
+        self.byteTree.heading('2', text='2', anchor='w')
+        self.byteTree.heading('1', text='1', anchor='w')
+        self.byteTree.heading('0', text='0', anchor='w')
+
+        self.byteTree.column('Address', stretch=NO, width=55)
+        self.byteTree.column('7', stretch=NO, width=25)
+        self.byteTree.column('6', stretch=NO, width=25)
+        self.byteTree.column('5', stretch=NO, width=25)
+        self.byteTree.column('4', stretch=NO, width=25)
+        self.byteTree.column('3', stretch=NO, width=25)
+        self.byteTree.column('2', stretch=NO, width=25)
+        self.byteTree.column('1', stretch=NO, width=25)
+        self.byteTree.column('0', stretch=NO, width=25)
+        self.byteTree.pack(fill=tk.BOTH, expand=1)
+
+    #
+    # Context Menu Callbacks
+    #
+    def do_popup(self, event):
+        try:
+            self.contextMenu.tk_popup(event.x_root, event.y_root)
+        finally:
+            self.grab_release()
+    
+    def onAddNodeContextMenuClick(self):
+        parent, current = self.getTreeViewSelection()
+    
+    def onRemoveNodeContextMenuClick(self):
+        parent, current = self.getTreeViewSelection()
+    
+    def onRenameNodeContextMenuClick(self):
+        parent, current = self.getTreeViewSelection()
+
     #
     # Menu Functions
     #
@@ -199,14 +256,19 @@ class TkMainWindow(tk.Tk):
 
     def onAboutHelpMenuClick(self):
         pass
+
     #
     # Gui Functions
     #
-    def treeViewItemSelected(self, event):
+    def getTreeViewSelection(self):
         curId = self.tree.selection()[0]
         parentId = self.tree.parent(curId)
         parent = self.tree.item(parentId)
         current = self.tree.item(curId)
+        return parent, current
+
+    def treeViewItemSelected(self, event):
+        parent, current = self.getTreeViewSelection()
 
         if "parent" in current['tags']:
             return
@@ -380,6 +442,6 @@ class TkMainWindow(tk.Tk):
 
     def loadComplexTypeComponents(self):
         pass
-
+        
     def on_closing(self):
         pass
