@@ -26,6 +26,8 @@ class TkMainWindow(tk.Tk):
     DATA_FORMAT_TYPE = ['BNR', 'IEEE754']
     DATA_TYPE = ['INT', 'UINT', 'FLOAT', 'STRING', 'BOOLEAN']
 
+    LANGUAGES = ['JAVA', 'CPP', 'CSHARP', 'PYTHON', 'JAVASCRIPT']
+
     def __init__(self):
         super().__init__()
 
@@ -55,6 +57,9 @@ class TkMainWindow(tk.Tk):
         self.textEnumMaxValue = StringVar()
         self.textEnumDataFormatType = StringVar()
         self.textEnumDescription = StringVar()
+
+        # General
+        self.stringStatusBar = StringVar()
 
         self.loadValues()
         self.init_ui()  
@@ -88,13 +93,22 @@ class TkMainWindow(tk.Tk):
         #
         # Window Settings
         #
+        width=700
+        height=700
         self.title("Message Generator")
-        self.geometry("500x500")
+        self.geometry(str(width)+"x"+str(height))
+        self.minsize(width=width, height=height)
         self.resizable(True, True)
         self.style = ttk.Style(self)
         self.style.theme_use("clam")
         self.style.configure('Treeview', rowheight=24)
-        
+        self.style.map("Treeview", background=[('selected', 'green')])
+        self.style.layout('nodotbox.Treeview.Item', 
+            [('Treeitem.padding',
+            {'children': [('Treeitem.indicator', {'side': 'left', 'sticky': ''}),
+                ('Treeitem.image', {'side': 'left', 'sticky': ''}),
+                ('Treeitem.text', {'side': 'left', 'sticky': ''})],
+            'sticky': 'nswe'})])
         #
         # Menu Bar
         #
@@ -143,9 +157,14 @@ class TkMainWindow(tk.Tk):
         self.contextMenu.add_command(label ="Rename", command=self.onRenameNodeContextMenuClick)
 
         #
-        # Left Panel TreeView
+        # Status Panel
         #
-        self.tree = ttk.Treeview(self.main)
+        self.statusbar = tk.Label(self.main, relief=tk.SUNKEN, anchor=tk.W, textvariable=self.stringStatusBar)
+
+        #
+        # Node Panel
+        #
+        self.tree = ttk.Treeview(self.main, style='nodotbox.Treeview')
         self.tree.bind('<<TreeviewSelect>>', self.treeViewItemSelected)
         self.tree.bind("<Button-3>", self.do_popup)
         self.tree.heading('#0', text='Nodes', anchor='w')
@@ -176,18 +195,23 @@ class TkMainWindow(tk.Tk):
         # to load messages
         for i in self.messages:
             self.tree.insert(self.node_messages, 'end', text=i.name, tags=('child'))
-        
-        self.tree.pack(side=LEFT, fill=tk.BOTH, expand=1)
-        self.propertyFrame = tk.LabelFrame(self.main, text="Properties")
+
+        self.propertyFrame = tk.LabelFrame(self.main, text="Properties", height=300)
         self.propertyTable = tk.Frame(self.propertyFrame)
-        self.propertyFrame.pack(side=TOP, fill=tk.BOTH, expand=1, padx=self.PADX, pady=self.PADY)
-        self.propertyTable.pack(fill=tk.BOTH, expand=1, padx=self.PADX, pady=self.PADY)        
+        self.propertyTable.pack(fill=tk.BOTH, padx=self.PADX, pady=self.PADY)        
 
         #
-        # Right Panel
+        # Configuration Panel
+        #
+        self.textLanguages = StringVar()
+        self.confFrame = tk.LabelFrame(self.main, text="Configurations")
+        self.cmbLanguages = ttk.Combobox(self.confFrame, values=[i for i in self.LANGUAGES], textvariable=self.textLanguages, state="readonly")
+        self.cmbLanguages.pack(padx=self.PADX, pady=self.PADY)
+
+        #
+        # Byte Panel
         #
         self.byteFrame = tk.Frame(self.main)
-        self.byteFrame.pack(side=BOTTOM, fill=tk.BOTH, expand=1)
         columns = ('Address', '7', '6', 5, '4', '3', '2', '1', '0')
         self.byteTree = ttk.Treeview(self.byteFrame, columns=columns, show='headings')
         #self.byteTree.bind('<<TreeviewSelect>>', self.byteTreeViewItemSelected)
@@ -212,6 +236,23 @@ class TkMainWindow(tk.Tk):
         self.byteTree.column('0', stretch=NO, width=25)
         self.byteTree.pack(fill=tk.BOTH, expand=1)
 
+        # Example Data        
+        self.byteTree.insert('', 'end', text="0x01", values=('0x01', 0, 0, 0, 0, 0, 0, 0, 0))
+        self.byteTree.insert('', 'end', text="0x02", values=('0x02', 0, 0, 0, 0, 0, 0, 0, 0))
+
+        #
+        # Window Pack
+        #
+        self.statusbar.pack(side=BOTTOM, fill=tk.X)
+        self.tree.pack(side=LEFT, fill=tk.BOTH, expand=1)
+        self.propertyFrame.pack(side=LEFT, fill=tk.BOTH, padx=self.PADX)
+        self.confFrame.pack(side=RIGHT, fill=tk.BOTH, expand=1, padx=self.PADX)
+        self.byteFrame.pack(side=RIGHT, fill=tk.BOTH, expand=1, padx=self.PADX)
+
+    def loadByteCodes(self, bytecodes):
+        self.byteTree.delete(*self.byteTree.get_children())
+        for i in bytecodes:
+            self.byteTree.insert('', 'end', text=i.address, values=(i.byte7, i.byte6, i.byte5, i.byte4, i.byte3, i.byte2, i.byte1, i.byte0))
     #
     # Context Menu Callbacks
     #
