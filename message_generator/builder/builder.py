@@ -13,10 +13,10 @@ class ProjectBuillder:
     def __init__(self) -> None:
         pass
 
-    def setLanguage(self, language):
+    def setLanguage(self, language: Language) -> None:
         self.language = language
 
-    def setBundle(self, bundle):
+    def setBundle(self, bundle: ProjectBundle) -> None:
         self.bundle = bundle
 
     def run(self):
@@ -28,11 +28,12 @@ class ProjectBuillder:
             self.python()
 
     def java(self):
-        createRecord(self.bundle.complextypes[1], self.bundle)
-        createMessage(self.bundle.messages[1], self.bundle)
         for e in self.bundle.enumerations:
             createEnumeration(e)
-    
+
+        for m in self.bundle.messages:
+            createMessage(m, self.bundle)
+
     def cpp(self):
         pass
 
