@@ -1,7 +1,8 @@
-from tkinter import *
 import tkinter as tk
 import tkinter.ttk as ttk
+from tkinter import *
 from tkinter.constants import LEFT, RIGHT
+from tkinter import filedialog
 from PIL import Image, ImageTk
 
 from message_generator.data.data import *
@@ -10,6 +11,11 @@ from message_generator.core.messagexml import *
 from message_generator.builder.builder import ProjectBuillder
 from message_generator.gui.gtk_main_window import *
 from message_generator.gui.tkinter_main_window import *
+
+class LogType:
+    INFO = 1
+    WARNING = 2
+    ERROR = 3
 
 class TkMainWindow(tk.Tk):
     PADX=5
@@ -59,10 +65,11 @@ class TkMainWindow(tk.Tk):
         self.textEnumDescription = StringVar()
 
         # General
-        self.stringStatusBar = StringVar()
+        self.textStatusBar = StringVar()
 
         self.loadValues()
         self.init_ui()  
+        self.log("Ready")
 
     def loadValues(self):
         try:
@@ -93,7 +100,7 @@ class TkMainWindow(tk.Tk):
         #
         # Window Settings
         #
-        width=700
+        width=1000
         height=700
         self.title("Message Generator")
         self.geometry(str(width)+"x"+str(height))
@@ -159,7 +166,7 @@ class TkMainWindow(tk.Tk):
         #
         # Status Panel
         #
-        self.statusbar = tk.Label(self.main, relief=tk.SUNKEN, anchor=tk.W, textvariable=self.stringStatusBar)
+        self.statusbar = tk.Label(self.main, relief=tk.SUNKEN, anchor=tk.W, textvariable=self.textStatusBar)
 
         #
         # Node Panel
@@ -278,13 +285,13 @@ class TkMainWindow(tk.Tk):
         pass
 
     def onOpenFileMenuClick(self):
-        pass
+        filename = filedialog.askopenfilename()
 
     def onSaveFileMenuClick(self):
-        pass
+        result = filedialog.asksaveasfile()
 
     def onSaveAsFileMenuClick(self):
-        pass
+        result = filedialog.asksaveasfile()
 
     def onExportFileMenuClick(self):
         pass
@@ -301,6 +308,15 @@ class TkMainWindow(tk.Tk):
     #
     # Gui Functions
     #
+    def log(self, message, logtype: LogType = LogType.INFO):
+        if LogType.ERROR == logtype:
+            self.statusbar.config(font=('Arial 10 bold'))
+            self.statusbar.config(fg="white")
+            self.statusbar.config(bg="red")
+        elif LogType.WARNING == logtype:
+            self.statusbar.config(bg="yellow")
+        self.textStatusBar.set(message)
+
     def getTreeViewSelection(self):
         curId = self.tree.selection()[0]
         parentId = self.tree.parent(curId)
@@ -375,7 +391,7 @@ class TkMainWindow(tk.Tk):
         self.textEnumDataFormatType.set(enum.dataFormatType)
         self.textEnumDescription.set(enum.description)
 
-    def loadInterfaceComponents(self):     
+    def loadInterfaceComponents(self):
         lblInterfaceName = Label(self.propertyTable, text="Interface Name")
         lblBitOrder = Label(self.propertyTable, text="Bit Order")
         lblInByteOrder = Label(self.propertyTable, text="In Byte Order")
