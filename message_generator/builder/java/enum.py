@@ -10,7 +10,7 @@ def createEnumeration(enum: EnumXML):
     filePath = os.path.join(os.path.curdir, Set.outputDir, Set.EnumerationSettings.outputDir, fileName)
     f = open(filePath, 'w')
 
-    print("package enumeration;\n", file=f)
+    print("package {};\n".format(Set.EnumerationSettings.outputDir), file=f)
     print("import java.util.*;", file=f)
     print("", file=f)
     

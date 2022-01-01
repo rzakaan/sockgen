@@ -11,5 +11,5 @@ class BuilderSettings:
         commentAdd = True
 
     class EnumerationSettings:
-        outputDir = "enumerations"
+        outputDir = "enumeration"
         commentAdd = True

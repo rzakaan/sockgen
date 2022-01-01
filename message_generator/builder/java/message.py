@@ -20,9 +20,9 @@ def createMessage(message: MessageXML, bundle: MessageBundle) -> bool:
         fileComment(f)
 
     # imports
-    print("package msg;", file=f)
+    print("package {};".format(Set.MessageSettings.outputDir), file=f)
     print("", file=f)
-    print("import enumerations.*;\n", file=f)
+    print("import {}.*;\n".format(Set.EnumerationSettings.outputDir), file=f)
         
     # class header
     print("class {} {} {{".format(message.name, extends), file=f)
