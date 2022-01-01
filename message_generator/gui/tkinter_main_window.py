@@ -1,3 +1,4 @@
+import keyboard
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import *
@@ -64,6 +65,13 @@ class TkMainWindow(tk.Tk):
 
         # General
         self.textStatusBar = StringVar()
+
+        # Shortcuts
+        keyboard.add_hotkey("ctrl+n", lambda: self.onNewFileMenuClick())
+        keyboard.add_hotkey("ctrl+o", lambda: self.onOpenFileMenuClick())
+        keyboard.add_hotkey("ctrl+s", lambda: self.onSaveFileMenuClick())
+        keyboard.add_hotkey("ctrl+shift+s", lambda: self.onSaveAsFileMenuClick())
+        keyboard.add_hotkey("ctrl+shift+v", lambda: self.onValidateEditMenuClick())
 
         self.loadValues()
         self.init_ui()  
