@@ -1,13 +1,3 @@
-# ==============================================================================
-#                                  DATA
-# ==============================================================================
-
-class Conf:
-    DEBUG=True
-    fileExtension = "java"
-    tab=' '
-    tabstop=4
-
 class ProjectBundle():
     interfaces = None
     messageBundle = None
@@ -17,6 +7,7 @@ class MessageBundle():
     enumerations = None
     complextypes = None
     messageHeader = None
+    messages = None
 
 class InterfacePacketXML:
     name='MsgUnknown' 
@@ -101,7 +92,7 @@ class EnumValueXML:
 class RecordXML:
     def __init__(self):    
         self.name=''
-        self.elements=[]
+        self.elements: RecordElementXML=[]
     
     def __str__(self):
         v  ='Record {}\n'.format(self.name)

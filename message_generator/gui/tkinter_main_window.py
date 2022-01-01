@@ -5,17 +5,12 @@ from tkinter.constants import LEFT, RIGHT
 from tkinter import filedialog
 from PIL import Image, ImageTk
 
-from message_generator.data.data import *
+from message_generator.data.enum import *
 from message_generator.data.models import *
 from message_generator.core.messagexml import *
-from message_generator.builder.builder import ProjectBuillder
+from message_generator.builder.project import ProjectBuillder
 from message_generator.gui.gtk_main_window import *
 from message_generator.gui.tkinter_main_window import *
-
-class LogType:
-    INFO = 1
-    WARNING = 2
-    ERROR = 3
 
 class TkMainWindow(tk.Tk):
     PADX=5
@@ -70,6 +65,7 @@ class TkMainWindow(tk.Tk):
         self.loadValues()
         self.init_ui()  
         self.log("Ready")
+        self.createProject()
 
     def loadValues(self):
         try:
@@ -87,14 +83,24 @@ class TkMainWindow(tk.Tk):
         self.messages = readMessages(root)
 
     def createProject(self):
-        bundle = MessageBundle
-        bundle.datafields = self.datafields
-        bundle.enumerations = self.enumerations
-        bundle.complextypes = self.complextypes
-        bundle.messageHeader = self.messageHeader
+        self.log("Creating Project")
+        
+        mbundle = MessageBundle
+        mbundle.datafields = self.datafields
+        mbundle.enumerations = self.enumerations
+        mbundle.complextypes = self.complextypes
+        mbundle.messageHeader = self.messageHeader
+        mbundle.messages = self.messages
+        mbundle.interfaces = self.interfaces
+
+        bundle = ProjectBundle()
+        bundle.interfaces = self.interfaces
+        bundle.messageBundle = mbundle
+
         builder = ProjectBuillder()
+        builder.setLanguage(Language.JAVA)
         builder.setBundle(bundle)
-        builder.run()    
+        builder.build()    
 
     def init_ui(self):
         #
