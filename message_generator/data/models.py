@@ -26,8 +26,9 @@ class InterfaceXML:
         self.bitOrder='' 
         self.inByteOrder='' 
         self.outByteOrder='' 
-        self.interfaceSettings='' 
-        self.interfaceType='' 
+        self.settings='' 
+        self.type='' 
+        self.mode='' 
         self.packets=[]
     
     def __str__(self):
@@ -36,8 +37,9 @@ class InterfaceXML:
         v +='|--> bitOrder({})\n'.format(self.bitOrder)
         v +='|--> inByteOrder({})\n'.format(self.inByteOrder)
         v +='|--> outByteOrder({})\n'.format(self.outByteOrder)
-        v +='|--> interfaceSettings({})\n'.format(self.interfaceSettings)
-        v +='|--> interfaceType({})\n'.format(self.interfaceType)
+        v +='|--> type({})\n'.format(self.type)
+        v +='|--> mode({})\n'.format(self.mode)
+        v +='|--> settings({})\n'.format(self.settings)
         v +='|--> packets({})\n'.format(', '.join([i.name for i in self.packets]))
         return v
 

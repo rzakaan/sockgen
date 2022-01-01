@@ -22,13 +22,14 @@ class TkMainWindow(tk.Tk):
     # Interface Properties
     BIT_ORDER = ['Intel', 'Motorola']
     BYTE_ORDER = [ 'LittleEndian', 'BigEndian' ]
-    INTERFACE_TYPE = ['TCP_SERVER', 'TCP_CLIENT', 'UDP_SERVER', 'UDP_CLIENT', 'UDP_BROADCAST', 'UDP_MULTICAST', 'UDP_UNICAST', 'SERIAL', 'FILE']
+    INTERFACE_TYPE = ['Tcp', 'Udp', 'Serial', 'File']
+    INTERFACE_MODE = ['Server', 'Client', 'Broadcast', 'Multicast', 'Unicast']
 
     # Datafield Properties
-    DATA_FORMAT_TYPE = ['BNR', 'IEEE754']
-    DATA_TYPE = ['INT', 'UINT', 'FLOAT', 'STRING', 'BOOLEAN']
+    DATA_FORMAT_TYPE = ['bnr', 'ieee754']
+    DATA_TYPE = ['int', 'uint', 'float', 'string', 'boolean']
 
-    LANGUAGES = ['JAVA', 'CPP', 'CSHARP', 'PYTHON', 'JAVASCRIPT']
+    LANGUAGES = ['Java', 'Cpp', 'Csharp', 'Python', 'Javascript']
 
     def __init__(self):
         super().__init__()
@@ -39,6 +40,7 @@ class TkMainWindow(tk.Tk):
         self.textInByteOrder = StringVar()
         self.textOutByteOrder = StringVar()
         self.textInterfaceType = StringVar()
+        self.textInterfaceMode = StringVar()
         self.textInterfaceSettings = StringVar()
         self.textInterfaceDescription = StringVar()
 
@@ -66,7 +68,6 @@ class TkMainWindow(tk.Tk):
         self.loadValues()
         self.init_ui()  
         self.log("Ready")
-        self.createProject()
 
     def loadValues(self):
         try:
@@ -220,7 +221,10 @@ class TkMainWindow(tk.Tk):
         self.textLanguages = StringVar()
         self.confFrame = tk.LabelFrame(self.main, text="Configurations")
         self.cmbLanguages = ttk.Combobox(self.confFrame, values=[i for i in self.LANGUAGES], textvariable=self.textLanguages, state="readonly")
+        self.btnCreate = tk.Button(self.confFrame, text="Create", command=self.onButtonCreateClick)
+
         self.cmbLanguages.pack(padx=self.PADX, pady=self.PADY)
+        self.btnCreate.pack(padx=self.PADX, pady=self.PADY)
 
         #
         # Byte Panel
@@ -373,16 +377,17 @@ class TkMainWindow(tk.Tk):
                 return i
         return None
 
-    def loadInterfaceData(self, interface):
+    def loadInterfaceData(self, interface: InterfaceXML):
         self.textInterfaceName.set(interface.name)
         self.textBitOrder.set(interface.bitOrder)
         self.textInByteOrder.set(interface.inByteOrder)
         self.textOutByteOrder.set(interface.outByteOrder)
-        self.textInterfaceType.set(interface.interfaceType)
-        self.textInterfaceSettings.set(interface.interfaceSettings)
+        self.textInterfaceType.set(interface.type)
+        self.textInterfaceMode.set(interface.mode)
+        self.textInterfaceSettings.set(interface.settings)
         self.textInterfaceDescription.set(interface.description)
 
-    def loadDatafieldData(self, datafield):
+    def loadDatafieldData(self, datafield: DataFieldXML):
         self.textDatafieldName.set(datafield.name)
         self.textDataType.set(datafield.dataType)
         self.textDataFormatType.set(datafield.dataFormatType)
@@ -392,7 +397,7 @@ class TkMainWindow(tk.Tk):
         self.textDataFieldResolution.set(datafield.description)
         self.textInterfaceDescription.set(datafield.description)
 
-    def loadEnumerationData(self, enum):
+    def loadEnumerationData(self, enum: EnumXML):
         self.textEnumName.set(enum.name)
         self.textEnumSize.set(enum.size)
         self.textEnumMinValue.set(enum.minValue)
@@ -406,6 +411,7 @@ class TkMainWindow(tk.Tk):
         lblInByteOrder = Label(self.propertyTable, text="In Byte Order")
         lblOutByteOrder = Label(self.propertyTable, text="Out Byte Order")
         lblInterfaceType = Label(self.propertyTable, text="Interface Type")
+        lblInterfaceMode = Label(self.propertyTable, text="Interface Mode")
         lblInterfaceSettings = Label(self.propertyTable, text="Interface Settings")
         lblInterfaceDescription = Label(self.propertyTable, text="Interface Description")
 
@@ -414,6 +420,7 @@ class TkMainWindow(tk.Tk):
         self.cmbInByteOrder = ttk.Combobox(self.propertyTable, values=[i for i in self.BYTE_ORDER], textvariable=self.textInByteOrder, state="readonly")
         self.cmbOutByteOrder = ttk.Combobox(self.propertyTable, values=[i for i in self.BYTE_ORDER], textvariable=self.textOutByteOrder, state="readonly")
         self.cmbInterfaceType = ttk.Combobox(self.propertyTable, values=[i for i in self.INTERFACE_TYPE], textvariable=self.textInterfaceType, state="readonly")
+        self.cmbInterfaceMode = ttk.Combobox(self.propertyTable, values=[i for i in self.INTERFACE_MODE], textvariable=self.textInterfaceMode, state="readonly")
         self.cmbInterfaceSettings = Entry(self.propertyTable, textvariable=self.textInterfaceSettings)
         self.entryInterfaceDescription = Entry(self.propertyTable, textvariable=self.textInterfaceDescription)
         
@@ -423,8 +430,9 @@ class TkMainWindow(tk.Tk):
         lblInByteOrder.grid(row=2, column=0, padx=self.PADX, pady=self.PADY)
         lblOutByteOrder.grid(row=3, column=0, padx=self.PADX, pady=self.PADY)
         lblInterfaceType.grid(row=4, column=0, padx=self.PADX, pady=self.PADY)
-        lblInterfaceSettings.grid(row=5, column=0, padx=self.PADX, pady=self.PADY)
-        lblInterfaceDescription.grid(row=6, column=0, padx=self.PADX, pady=self.PADY)
+        lblInterfaceMode.grid(row=5, column=0, padx=self.PADX, pady=self.PADY)
+        lblInterfaceSettings.grid(row=6, column=0, padx=self.PADX, pady=self.PADY)
+        lblInterfaceDescription.grid(row=7, column=0, padx=self.PADX, pady=self.PADY)
 
         # property components
         COL=1
@@ -433,8 +441,9 @@ class TkMainWindow(tk.Tk):
         self.cmbInByteOrder.grid(row=2, column=COL, sticky="W")
         self.cmbOutByteOrder.grid(row=3, column=COL, sticky="W")
         self.cmbInterfaceType.grid(row=4, column=COL, sticky="W")
-        self.cmbInterfaceSettings.grid(row=5, column=COL, sticky="W")
-        self.entryInterfaceDescription.grid(row=6, column=COL, sticky="W")
+        self.cmbInterfaceMode.grid(row=5, column=COL, sticky="W")
+        self.cmbInterfaceSettings.grid(row=6, column=COL, sticky="W")
+        self.entryInterfaceDescription.grid(row=7, column=COL, sticky="W")
     
     def loadDatafieldComponents(self):
         lblName = Label(self.propertyTable, text="Name")
@@ -505,6 +514,9 @@ class TkMainWindow(tk.Tk):
         entryMaxValue.grid(row=4, column=1, sticky="W")
         entrySize.grid(row=5, column=1, sticky="W")
         entryDescription.grid(row=7, column=1, sticky="W")  
+
+    def onButtonCreateClick(self):
+        self.createProject()
 
     def loadComplexTypeComponents(self):
         pass

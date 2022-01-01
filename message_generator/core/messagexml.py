@@ -49,8 +49,9 @@ def readInterfaces(node) -> list[InterfaceXML]:
         item.bitOrder = getAttrib(i, 'bitOrder')
         item.inByteOrder = getAttrib(i, 'inByteOrder')
         item.outByteOrder = getAttrib(i, 'outByteOrder')
-        item.interfaceSettings = getAttrib(i, 'interfaceSettings')
-        item.interfaceType = getAttrib(i, 'interfaceType')
+        item.settings = getAttrib(i, 'settings')
+        item.type = getAttrib(i, 'type')
+        item.mode = getAttrib(i, 'mode')
         item.description = getAttrib(i, 'description')
         item_list.append(item)
         

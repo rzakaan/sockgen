@@ -1,6 +1,6 @@
 <comm>
     <interfaces name='interface'>
-        <interface bitOrder='Intel' inByteOrder='BigEndian' outByteOrder='LittleEndian' interfaceSettings='127.0.0.0:8080' interfaceType='TCP_SERVER' name='MessageInputOutput' description="description for">
+        <interface bitOrder='Intel' inByteOrder='BigEndian' outByteOrder='LittleEndian' settings='127.0.0.0:8080' type='Tcp' mode='Server' name='MessageInputOutput' description="description for">
             <packet name='MsgHeatBeat' rx='true' />
             <packet name='MsgTimeSync' tx='true' />
             <packet name='MsgTest' tx='true' />
