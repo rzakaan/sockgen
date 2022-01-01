@@ -5,6 +5,7 @@ from tkinter.constants import LEFT, RIGHT
 from tkinter import filedialog
 from PIL import Image, ImageTk
 
+from message_generator.data.settings import Settings
 from message_generator.data.enum import *
 from message_generator.data.models import *
 from message_generator.core.messagexml import *
@@ -291,7 +292,9 @@ class TkMainWindow(tk.Tk):
         pass
 
     def onOpenFileMenuClick(self):
-        filename = filedialog.askopenfilename()
+        filepath = filedialog.askopenfilename(initialdir=os.path.curdir)
+        Settings().configFile = filepath
+        self.log("Loading config file: %s" % filepath)
 
     def onSaveFileMenuClick(self):
         result = filedialog.asksaveasfile()
