@@ -221,10 +221,10 @@ class TkMainWindow(tk.Tk):
         self.textLanguages = StringVar()
         self.confFrame = tk.LabelFrame(self.main, text="Configurations")
         self.cmbLanguages = ttk.Combobox(self.confFrame, values=[i for i in self.LANGUAGES], textvariable=self.textLanguages, state="readonly")
-        self.btnCreate = tk.Button(self.confFrame, text="Create", command=self.onButtonCreateClick)
+        self.btnGenerate = tk.Button(self.confFrame, text="Generate", command=self.onButtonGenerateClick)
 
         self.cmbLanguages.pack(padx=self.PADX, pady=self.PADY)
-        self.btnCreate.pack(padx=self.PADX, pady=self.PADY)
+        self.btnGenerate.pack(padx=self.PADX, pady=self.PADY)
 
         #
         # Byte Panel
@@ -515,7 +515,7 @@ class TkMainWindow(tk.Tk):
         entrySize.grid(row=5, column=1, sticky="W")
         entryDescription.grid(row=7, column=1, sticky="W")  
 
-    def onButtonCreateClick(self):
+    def onButtonGenerateClick(self):
         self.createProject()
 
     def loadComplexTypeComponents(self):
