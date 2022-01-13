@@ -24,18 +24,20 @@ LINT_IGNORE="E501,W293"
 
 .PHONY: clean test dist
 
+all: build
+
 clean:
+	rm -rf ${PROJECT}/__pycache__
+	rm -rf ${TEST_DIR}/__pycache__
 	rm -rf ${DIST_DIR}
 	rm -rf ${BUILD_DIR}
-	rm -rf __pycache__
 	rm -rf *.pyc
 	rm -rf *.egg
 	rm -rf *.egg-info
-	find . -name '*.pyc' -exec rm -f {} \;
 
 install:
-	${PIP} install -r "${REQ}/dev"
-	${PIP} install -r "${REQ}/prod"
+	${PIP} install -r "${REQ}/dev.txt"
+	${PIP} install -r "${REQ}/prod.txt"
 
 run:
 	${PY} -m ${PROJECT}.main ${RUNTIME_GUI} ${GUI_PARAM} ${GUI_VAL}
@@ -44,7 +46,7 @@ lint:
 	${PY} -m flake8 --ignore ${LINT_IGNORE} ${PROJECT}
 
 test:
-	${PY} -m unittest test.test_core.py ${TEST_PARAMS}
+	${PY} -m unittest ${TEST_DIR}/main_test.py -v
 
 build:
 	${PY} setup.py sdist bdist_wheel
