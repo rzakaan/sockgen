@@ -38,13 +38,13 @@ install:
 	${PIP} install -r "${REQ}/prod"
 
 run:
-	${PIP} -m ${PROJECT}.main ${RUNTIME_GUI} ${GUI_PARAM} ${GUI_VAL}
+	${PY} -m ${PROJECT}.main ${RUNTIME_GUI} ${GUI_PARAM} ${GUI_VAL}
 
 lint:
 	${PY} -m flake8 --ignore ${LINT_IGNORE} ${PROJECT}
 
 test:
-	${PIP} -m unittest test.test_core.py ${TEST_PARAMS}
+	${PY} -m unittest test.test_core.py ${TEST_PARAMS}
 
 build:
 	${PY} setup.py sdist bdist_wheel
