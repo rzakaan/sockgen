@@ -1,6 +1,6 @@
-from message_generator.data.models import *
-from message_generator.core.messagecore import *
-from message_generator.builder.settings import BuilderSettings as Set
+from sockgen.data.models import *
+from sockgen.core.messagecore import *
+from sockgen.builder.settings import BuilderSettings as Set
 
 def createSetterGetter(recordElement: RecordElementXML, bundle, file):
     functionName = recordElement.name[0].upper() + recordElement.name[1:]

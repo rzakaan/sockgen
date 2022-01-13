@@ -1,7 +1,7 @@
 import os
-from message_generator.builder.settings import BuilderSettings as Set
-from message_generator.data.models import *
-from message_generator.core.messagecore import *
+from sockgen.builder.settings import BuilderSettings as Set
+from sockgen.data.models import *
+from sockgen.core.messagecore import *
 
 def createEnumeration(enum: EnumXML):
     if Set.DEBUG: print(enum)

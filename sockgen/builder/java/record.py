@@ -1,8 +1,8 @@
-from message_generator.data.models import *
-from message_generator.core.messagecore import *
-from message_generator.builder.java.common import *
-from message_generator.builder.java.setter_getter import *
-from message_generator.builder.java.constructor import *
+from sockgen.data.models import *
+from sockgen.core.messagecore import *
+from sockgen.builder.java.common import *
+from sockgen.builder.java.setter_getter import *
+from sockgen.builder.java.constructor import *
 
 def createRecord(record: RecordXML, bundle: MessageBundle) -> bool:
     if Set.DEBUG: print(record)

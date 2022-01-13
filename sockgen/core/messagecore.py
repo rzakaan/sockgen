@@ -1,4 +1,4 @@
-from message_generator.data.models import *
+from sockgen.data.models import *
 
 def getRecordElement(record_list, dataTypeName: str):
     for field in record_list:

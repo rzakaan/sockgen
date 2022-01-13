@@ -2,8 +2,8 @@
 
 import argparse
 
-from message_generator.gui.gtk_main_window import *
-from message_generator.gui.tkinter_main_window import *
+from sockgen.gui.gtk_main_window import *
+from sockgen.gui.tkinter_main_window import *
 
 if __name__ == '__main__':  
     parser = argparse.ArgumentParser(description='Generate a message from a XML file.')

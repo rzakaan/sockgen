@@ -6,18 +6,18 @@ from tkinter.constants import LEFT, RIGHT
 from tkinter import filedialog
 from PIL import Image, ImageTk
 
-from message_generator.data.settings import Settings
-from message_generator.data.enum import *
-from message_generator.data.models import *
-from message_generator.core.messagexml import *
-from message_generator.builder.project import ProjectBuillder
-from message_generator.gui.gtk_main_window import *
-from message_generator.gui.tkinter_main_window import *
+from sockgen.data.settings import Settings
+from sockgen.data.enum import *
+from sockgen.data.models import *
+from sockgen.core.messagexml import *
+from sockgen.builder.project import ProjectBuillder
+from sockgen.gui.gtk_main_window import *
+from sockgen.gui.tkinter_main_window import *
 
 class TkMainWindow(tk.Tk):
     PADX=5
     PADY=5
-    ICON_DIR="./message_generator/icons/"
+    ICON_DIR="./sockgen/icons/"
     TAGS = ['interfaces', 'datafields', 'enumerations', 'complex', 'messages']
     
     # Interface Properties

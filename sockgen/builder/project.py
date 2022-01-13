@@ -1,10 +1,10 @@
 
-from message_generator.builder.java.builder import JavaBuilder
-from message_generator.data.enum import *
-from message_generator.data.models import *
-from message_generator.builder.java.record import *
-from message_generator.builder.java.message import *
-from message_generator.builder.java.enum import *
+from sockgen.builder.java.builder import JavaBuilder
+from sockgen.data.enum import *
+from sockgen.data.models import *
+from sockgen.builder.java.record import *
+from sockgen.builder.java.message import *
+from sockgen.builder.java.enum import *
 
 class ProjectBuillder:
     def __init__(self) -> None:

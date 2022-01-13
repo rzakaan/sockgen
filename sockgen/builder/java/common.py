@@ -1,6 +1,6 @@
 import os
 from datetime import date
-from message_generator.builder.settings import BuilderSettings as Set
+from sockgen.builder.settings import BuilderSettings as Set
 
 def newline(file):
     print('', file=file)

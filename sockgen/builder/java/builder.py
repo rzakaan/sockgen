@@ -1,8 +1,8 @@
-from message_generator.builder.settings import BuilderSettings as Set
-from message_generator.data.models import *
-from message_generator.builder.java.record import *
-from message_generator.builder.java.message import *
-from message_generator.builder.java.enum import *
+from sockgen.builder.settings import BuilderSettings as Set
+from sockgen.data.models import *
+from sockgen.builder.java.record import *
+from sockgen.builder.java.message import *
+from sockgen.builder.java.enum import *
 
 import os
 class JavaBuilder():

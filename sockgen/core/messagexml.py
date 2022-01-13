@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 
-from message_generator.data.models import *
-from message_generator.core.messagexml import *
+from sockgen.data.models import *
+from sockgen.core.messagexml import *
 
 # ./genre/decade/movie/[year='1992']
 # ./genre/decade/movie/format/[@multiple='Yes']
