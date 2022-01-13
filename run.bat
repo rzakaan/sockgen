@@ -1,1 +1,1 @@
-python -m message_generator.main
+python -m sockgen.main

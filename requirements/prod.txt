@@ -1,3 +1,2 @@
 keyboard
-sphinx==4.0.3
 pgi==0.0.11

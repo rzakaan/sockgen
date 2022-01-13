@@ -1,0 +1,8 @@
+tox
+flake8
+pytest
+pytest-benchmark
+build
+wheel
+twine
+sphinx

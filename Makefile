@@ -1,24 +1,59 @@
-PROJECT="message_generator"
+PROJECT="sockgen"
+
+# Directories
+DIST_DIR="dist"
+BUILD_DIR="build"
+TEST_DIR="__test__"
 DEPLOY="deploy"
-TEST_PARAMS="-v"
+REQ="requirements"
+
+# Runtime Parameters
 GUI_PARAM="--gui"
 GUI_VAL="tk"
 
+# Test Parameter
+TEST_PARAMS="-v"
+
+# Applications
+PY="python3"
+PIP="pip3"
+SPHINX="sphinx-build"
+
+# Parameters
+LINT_IGNORE="E501,W293"
+
 .PHONY: clean test dist
 
-all:
-	echo "All"
-run:
-	python -m ${PROJECT}.main ${RUNTIME_GUI} ${GUI_PARAM} ${GUI_VAL}
 clean:
-	[ -d ${DEPLOY}/build ]      && rm ${DEPLOY}/build -r
-	[ -d ${DEPLOY}/dist ]       && rm ${DEPLOY}/dist -r
-	[ -d ${DEPLOY}/${PROJECT} ] && rm ${DEPLOY}/${PROJECT} -r
+	rm -rf ${DIST_DIR}
+	rm -rf ${BUILD_DIR}
+	rm -rf __pycache__
+	rm -rf *.pyc
+	rm -rf *.egg
+	rm -rf *.egg-info
+	find . -name '*.pyc' -exec rm -f {} \;
+
+install:
+	${PIP} install -r "${REQ}/dev"
+	${PIP} install -r "${REQ}/prod"
+
+run:
+	${PIP} -m ${PROJECT}.main ${RUNTIME_GUI} ${GUI_PARAM} ${GUI_VAL}
+
+lint:
+	${PY} -m flake8 --ignore ${LINT_IGNORE} ${PROJECT}
+
 test:
-	python -m test.test_core.py ${TEST_PARAMS}
-dist:
-	cd ${DEPLOY} && python setup.py bdist
-makedoc:
-	sphinx-build -b html doc/sphinx
-setup:
-	pip install -r requirements.txt
+	${PIP} -m unittest test.test_core.py ${TEST_PARAMS}
+
+build:
+	${PY} setup.py sdist bdist_wheel
+
+publish:
+	${PY} -m twine upload dist/*
+
+publish_test:
+	${PY} -m twine check dist/* && ${PY} -m twine upload --repository testpypi dist/*
+
+doc:
+	${SPHINX} -b html doc/sphinx
