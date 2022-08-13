@@ -1,8 +1,6 @@
 #!/usr/bin/python
 
 import argparse
-
-from sockgen.gui.gtk_main_window import *
 from sockgen.gui.tkinter_main_window import *
 
 if __name__ == '__main__':  
@@ -13,9 +11,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     try:
-        if args.gui == "gtk":
-            main_window = GtkMainWindow()
-        else:
             # gui 'tk'
             main_window = TkMainWindow()
             main_window.mainloop()

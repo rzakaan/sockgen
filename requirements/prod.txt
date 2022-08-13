@@ -1,2 +1,0 @@
-keyboard
-pgi==0.0.11

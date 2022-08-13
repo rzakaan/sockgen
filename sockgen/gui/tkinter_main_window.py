@@ -1,4 +1,4 @@
-import keyboard
+import os
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import *
@@ -11,7 +11,6 @@ from sockgen.data.enum import *
 from sockgen.data.models import *
 from sockgen.core.messagexml import *
 from sockgen.builder.project import ProjectBuillder
-from sockgen.gui.gtk_main_window import *
 from sockgen.gui.tkinter_main_window import *
 
 class TkMainWindow(tk.Tk):
@@ -67,11 +66,11 @@ class TkMainWindow(tk.Tk):
         self.textStatusBar = StringVar()
 
         # Shortcuts
-        keyboard.add_hotkey("ctrl+n", lambda: self.onNewFileMenuClick())
-        keyboard.add_hotkey("ctrl+o", lambda: self.onOpenFileMenuClick())
-        keyboard.add_hotkey("ctrl+s", lambda: self.onSaveFileMenuClick())
-        keyboard.add_hotkey("ctrl+shift+s", lambda: self.onSaveAsFileMenuClick())
-        keyboard.add_hotkey("ctrl+shift+v", lambda: self.onValidateEditMenuClick())
+        #keyboard.add_hotkey("ctrl+n", lambda: self.onNewFileMenuClick())
+        #keyboard.add_hotkey("ctrl+o", lambda: self.onOpenFileMenuClick())
+        #keyboard.add_hotkey("ctrl+s", lambda: self.onSaveFileMenuClick())
+        #keyboard.add_hotkey("ctrl+shift+s", lambda: self.onSaveAsFileMenuClick())
+        #keyboard.add_hotkey("ctrl+shift+v", lambda: self.onValidateEditMenuClick())
 
         self.loadValues()
         self.init_ui()  
@@ -123,7 +122,7 @@ class TkMainWindow(tk.Tk):
         self.minsize(width=width, height=height)
         self.resizable(True, True)
         self.style = ttk.Style(self)
-        self.style.theme_use("clam")
+        self.style.theme_use("aqua")
         self.style.configure('Treeview', rowheight=24)
         self.style.map("Treeview", background=[('selected', 'green')])
         self.style.layout('nodotbox.Treeview.Item', 
